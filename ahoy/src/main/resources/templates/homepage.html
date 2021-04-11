@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+         <!-- Required meta tags -->
+         <meta charset="utf-8">
+         <meta name="viewport" content="width=device-width, initial-scale=1">
+     
+         <!-- Bootstrap CSS -->
+         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
+         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+         <link th:href="@{/styles/style.css}" rel="stylesheet" />
+
+    <title>Home Page</title>
+</head>
+<body>
+
+<nav class="navbar navbar-light p-2">
+    <div class="d-flex col-1 flex-md-nowrap justify-content-between">
+        <img style="padding: 2px"
+             th:src="@{/logo.png}"
+             height="56"
+             width="60"
+             alt=""
+             loading="lazy"/>
+        <a class="navbar-brand" style="color:white;" href="#">
+            Ahoy
+        </a>
+    </div>
+    <div class="d-flex align-items-center justify-content-md-end">
+        <div class="mt-1">
+            <a class="nav-link " th:href="@{homepage}">Home</a>
+        </div>
+        <div class="mt-1">
+            <a class="nav-link" th:href="@{vesselSubscribe}">Subscribe</a>
+        </div>
+        <div class="mt-1">
+            <a class="nav-link" th:href="@{schedule}">Schedule</a>
+        </div>
+        <div class="mt-1">
+            <a class="nav-link" th:href="@{alerts}">Alerts</a>
+        </div>
+        <div class="dropdown">
+            <ul class="navbar-nav mr-auto mt-1"></ul>
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown">
+                Hello, [[${#httpServletRequest.remoteUser}]]
+            </a>
+            <ul class="dropdown-menu">
+                <li><a class="dropdown-item" th:href="@{settings}">Account Preferences</a></li>
+                <li><a class="dropdown-item" th:href="@{logout}">Log out</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="container">
+    <div class="row">
+        <br>
+        <br>
+    </div>
+
+    <div class="row">
+        <h1 th:inline="text" style="text-align:center">Ahoy, [[${#httpServletRequest.remoteUser}]]</h1>
+        <p style="text-align:center">Your daily schedule contains the ships arriving today. Scroll down for recent alerts.</p>
+        <br>
+        <br>
+    </div>
+
+    <div class="row">
+        <div class="col-2">
+            <audio controls autoplay style="visibility: hidden;">
+                <source th:src="@{/sound.mp3}" type="audio/mpeg">
+                Your browser does not support the audio element.
+            </audio>
+        </div>
+
+        <div class="col-4">
+            <div class="btn-group btn-group-toggle"  data-toggle="buttons">
+                <label class="btn btn-dark active" style="margin:5px;">
+                  <input type="radio" name="options" id="allVoyages" autocomplete="off" checked>All Voyages
+                </label>
+                <label class="btn btn-dark" style="margin:5px;">
+                  <input type="radio" name="options" id="subscribedVoyages" autocomplete="off">Subscribed
+                </label>
+              </div>
+        </div>
+          <br> 
+          <br>  
+
+    </div>
+
+    <div class="row">
+        <div class="col-2">
+        </div>
+        <div class="col-8">
+            <div class="card" >
+                <h5 class="card-header">Today's Schedule</h5>
+                <div class="card-body table-responsive">
+                    <table class="table" id = "todayVoyageTable">
+                        <thead >
+                        <tr>
+                            <th style="position: sticky;" scope="col" id = "sortVesselNameHomepageSchedule">Vessel Name<i class="fa fa-fw fa-sort"></i></th>
+                            <th style="position: sticky;" scope="col">Voyage Number</th>
+                            <th style="position: sticky;" scope="col" id = "sortBerthStatusHomepage">Status<i class="fa fa-fw fa-sort"></i></th>
+                            <th style="position: sticky;" scope="col">Berth Number</th>
+                            <th style="position: sticky;" scope="col">ETA</th>
+                        </tr>
+                        </thead>
+                        <tbody id = "todayVoyageRecord">
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="col-2">
+        </div>
+    </div>
+
+    <div class="row">
+        <br>
+    </div>
+
+    <div class="row" style="padding-bottom: 8px;">
+        <div class="col-2"></div>
+        <div class="col-4">
+            <div class="dropdown" style="margin:5px;">
+                <select class="btn btn-dark" id="alertFilter">
+                    <option value="allAlerts">All Alert Types</option>
+                    <option value="Change in Average Speed">Change in Average Speed</option>
+                    <option value="Change in Berthing Time">Change in Berthing Time</option>
+                    <option value="Change in Unberthing TIme">Change in Unberthing Time</option>
+                    <option value="Change in Berth">Change in Berth</option>
+                    <option value="Change in Status">Change in Status</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="col-4">
+            <button class="btn btn-dark pull-right" style="margin:5px;" id = "showAllAlerts">Show All</button>
+        </div>
+
+        <div class="col-2">
+        </div>
+        <br>
+    </div>
+
+
+    <div class="row">
+        <div class="col-2">
+        </div>
+        <div class="col-8">
+            <div class="card" >
+                <h5 class="card-header">Today's Alerts</h5>
+                <div class="card-body table-responsive">
+                    <table class="table" id = "todayAlertsTable" >
+                        <thead >
+                        <tr>
+                            <th style="position: sticky;" scope="col">Alert Type</th>
+                            <th style="position: sticky;" scope="col" id = "sortVesselNameHomepageAlerts">Vessel Name<i class="fa fa-fw fa-sort"></i></th>
+                            <th style="position: sticky;" scope="col">Status</th>
+                            <th style="position: sticky;" scope="col">Invoyage Number</th>
+                            <th style="position: sticky;" scope="col">DateTime</th>
+                            <th style="position: sticky;" scope="col">Alert Content</th>
+                            <th style="position: sticky;" scope="col">Mark as read</th>
+                        </tr>
+                        </thead>
+
+                        <tbody id="todayAlertRecord">
+
+
+                        </tbody>
+
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="col-2">
+        </div>
+    </div>
+</div>
+
+
+
+
+<!-- Bootstrap Bundle with Popper -->
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+        integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+        crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha1/js/bootstrap.min.js"
+        integrity="sha384-oesi62hOLfzrys4LxRF63OJCXdXDipiYWBnvTl9Y9/TRlw5xlKIEHpNyvvDShgf/"
+        crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/chartist.js/latest/chartist.min.js"></script>
+<!-- Github buttons -->
+<script async defer src="https://buttons.github.io/buttons.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js" integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf" crossorigin="anonymous"></script>
+<script type="text/javascript" th:src="@{/js/jquery-3.5.1.js}"></script>
+<script type="text/javascript" th:src="@{/js/homepage.js}"></script>
+
+
+</body>
+</html>
